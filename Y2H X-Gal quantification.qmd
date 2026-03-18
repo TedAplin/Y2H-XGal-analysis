@@ -6,4 +6,43 @@ title: "Y2H X-Gal quantification"
 
 ```{r}
 library(tidyverse)
+library(here)
+library(FSA)
+library(svglite)
+library(png)
+library(patchwork)
+
+source(here("Functions", "Y2H-Xgal-analysis_functions.R"))
+```
+
+## File handling
+
+```{r}
+#| label: selecting file
+#| eval: false
+#| include: false
+
+InputFilePath <- file.choose()
+```
+
+```{r}
+#| label: "collecting data"
+
+Data <- read.csv(InputFilePath)
+Data$Combination <- factor(Data$Combination)
+Data$OD <- factor(Data$OD)
+```
+
+# Visualsation
+
+```{r}
+P1 <- PanelPlot(Data, "1", TRUE)
+P2 <- PanelPlot(Data, "0.1")
+P3 <- PanelPlot(Data, "0.01", FALSE, TRUE)
+
+Panel <- P1 + P2 + P3 + plot_layout(ncol = 3, widths = c(1,1,1))
+
+png(filename = gsub(".csv", ".png", InputFilePath), width = 3500, height = 1500, units = "px", res = 400)
+print(Panel)
+dev.off()
 ```
